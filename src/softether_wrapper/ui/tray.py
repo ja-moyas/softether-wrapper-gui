@@ -62,6 +62,9 @@ class TrayIcon(QSystemTrayIcon):
         if state is ConnectionState.CONNECTED:
             label = f"Conectado: {connected_account}" if connected_account else "Conectado"
             self._connect_action.setText("Desconectar")
+        elif state is ConnectionState.STALE:
+            label = "Sin transporte: reconectando…"
+            self._connect_action.setText("Desconectar")
         elif state is ConnectionState.CONNECTING:
             label = "Conectando…"
             self._connect_action.setText("Cancelar conexión")

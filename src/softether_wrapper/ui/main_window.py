@@ -88,7 +88,9 @@ class MainWindow(QMainWindow):
         self.accounts.update_snapshot(snapshot)
         self.nics.update_snapshot(snapshot)
         active = snapshot.connected_account
-        if active:
+        if active and snapshot.is_phantom:
+            self.statusBar().showMessage(f"Sin transporte: {active.name} — reconectando…")
+        elif active:
             self.statusBar().showMessage(f"Conectado: {active.name} — {active.server}")
         else:
             self.statusBar().showMessage("Sin conexión")

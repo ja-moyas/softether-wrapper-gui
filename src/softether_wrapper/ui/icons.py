@@ -15,6 +15,9 @@ _STATE_FILES = {
     ConnectionState.CONNECTED: "state-connected.svg",
     ConnectionState.CONNECTING: "state-connecting.svg",
     ConnectionState.DISCONNECTED: "state-disconnected.svg",
+    # Reported connected but carrying no transport: amber, like a connection in
+    # progress, because that is exactly what the wrapper is doing about it.
+    ConnectionState.STALE: "state-connecting.svg",
     ConnectionState.UNKNOWN: "state-disconnected.svg",
     "error": "state-error.svg",
 }

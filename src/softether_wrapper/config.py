@@ -35,6 +35,10 @@ class Preferences:
     tap_interface: str = "vpn_vpn0"
     show_ip: bool = True
     helper_retry_ms: int = 5000
+    auto_recover: bool = True
+    recover_after: int = 3
+    recover_cooldown_s: int = 60
+    recover_max_attempts: int = 5
 
 
 class ConfigStore:
@@ -52,6 +56,10 @@ class ConfigStore:
             tap_interface=str(s.value("network/tap_interface", "vpn_vpn0")),
             show_ip=_to_bool(s.value("network/show_ip", True)),
             helper_retry_ms=int(str(s.value("helper/retry_ms", 5000))),
+            auto_recover=_to_bool(s.value("monitor/auto_recover", True)),
+            recover_after=int(str(s.value("monitor/recover_after", 3))),
+            recover_cooldown_s=int(str(s.value("monitor/recover_cooldown_s", 60))),
+            recover_max_attempts=int(str(s.value("monitor/recover_max_attempts", 5))),
         )
 
     def save(self, preferences: Preferences) -> None:
@@ -64,6 +72,10 @@ class ConfigStore:
         s.setValue("network/tap_interface", preferences.tap_interface)
         s.setValue("network/show_ip", preferences.show_ip)
         s.setValue("helper/retry_ms", preferences.helper_retry_ms)
+        s.setValue("monitor/auto_recover", preferences.auto_recover)
+        s.setValue("monitor/recover_after", preferences.recover_after)
+        s.setValue("monitor/recover_cooldown_s", preferences.recover_cooldown_s)
+        s.setValue("monitor/recover_max_attempts", preferences.recover_max_attempts)
         s.sync()
 
 

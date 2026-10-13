@@ -71,6 +71,8 @@ Launch **SoftEther VPN Wrapper** from the application menu or run
 `~/.local/bin/softether-wrapper`. The tray icon reflects the state:
 
 * grey – disconnected · amber – connecting · green – connected · red – error.
+  Amber also covers *connected without transport*: the client still reports the
+  account as connected but the tunnel carries no traffic (see below).
 
 Pages:
 
@@ -82,6 +84,37 @@ Pages:
 * **Certificados** – trusted CA certificates (add/delete/export) and MakeCert.
 * **Herramientas** – environment check (`Check`), `About`, client version and
   certificate creation.
+
+## Auto-recovery of hung sessions
+
+SoftEther keeps the session object — and the "Session Established" text — after
+the socket to the server dies, for instance when the machine loses its internet
+connection. `AccountList` still says `Connected`, every counter in
+`AccountStatusGet` sits at zero, and the TAP keeps its IP and route, so ARP to
+the remote network never resolves and the connection *looks* healthy while
+nothing can reach the server. Disconnecting and reconnecting by hand is the only
+thing that drops the dead socket, and nothing in `vpncmd` reports the problem.
+
+The wrapper therefore treats `Number of TCP Connections == 0` on an account the
+client reports as connected as a *stale session*, shown as amber and labelled
+**"Conectada sin transporte"**, and repairs it on its own:
+
+1. after `recover_after` consecutive stale samples (default 3, i.e. ~30 s at the
+   default 10 s interval) it runs `AccountDisconnect` followed by
+   `AccountConnect` — in that order, with a short pause so the client can let go
+   of the old session;
+2. a grace window and a `recover_cooldown_s` cooldown keep it from hammering the
+   client, and it never acts while a connect/disconnect you started is in
+   flight;
+3. after `recover_max_attempts` consecutive failures it stops and says so,
+   instead of looping forever;
+4. a healthy sample clears the attempt budget.
+
+Everything is configurable in **Preferencias** (or `~/.config/softether-wrapper/softether-wrapper.conf`,
+group `[monitor]`): `auto_recover`, `recover_after`, `recover_cooldown_s`,
+`recover_max_attempts`. The wrapper only issues `AccountConnect` /
+`AccountDisconnect`; it still never touches the TAP address owned by
+`vpn-tap-ip.service`.
 
 ## Security model
 
@@ -134,6 +167,12 @@ These steps need a real session/polkit and cannot be automated in CI:
 5. `journalctl -u softether-wrapper-helper.service` shows no errors.
 6. Confirm `vpn-tap-ip.service` still owns `vpn_vpn0` and the IP is only
    displayed, never modified.
+7. Auto-recovery: with a healthy session, block the way out to the server
+   (`sudo iptables -I OUTPUT -d <server-ip> -p tcp --dport 443 -j DROP`), watch
+   the tray turn amber, then remove the rule
+   (`sudo iptables -D OUTPUT -d <server-ip> -p tcp --dport 443 -j DROP`) and
+   confirm the wrapper reconnects on its own (`Number of TCP Connections` back
+   at 2) without any manual action.
 
 ## Notes / limitations
 

@@ -17,6 +17,7 @@ from .config import ConfigStore, Preferences
 from .dbus_client import HelperClient, HelperError, MonitorSnapshot
 from .models import AccountSummary, ConnectionState
 from .network import tap_addresses
+from .recovery import RecoveryDecision, RecoverySettings, SessionRecovery
 from .ui.main_window import MainWindow
 from .ui.tray import TrayIcon
 
@@ -24,6 +25,27 @@ log = logging.getLogger("softether-wrapper")
 
 APP_DISPLAY_NAME = "SoftEther VPN Wrapper"
 LOCK_FILE = "softether-wrapper.lock"
+
+#: How long the client is given to drop the dead session before reconnecting.
+RECOVERY_PAUSE_S = 2.5
+
+#: Human-readable state names for the tray tooltip.
+STATE_TEXT = {
+    ConnectionState.CONNECTED: "conectada",
+    ConnectionState.CONNECTING: "conectando",
+    ConnectionState.DISCONNECTED: "desconectada",
+    ConnectionState.STALE: "conectada sin transporte",
+    ConnectionState.UNKNOWN: "desconocida",
+}
+
+
+def _recovery_settings(prefs: Preferences) -> RecoverySettings:
+    return RecoverySettings(
+        enabled=prefs.auto_recover,
+        after_samples=prefs.recover_after,
+        cooldown_s=prefs.recover_cooldown_s,
+        max_attempts=prefs.recover_max_attempts,
+    )
 
 
 class WrapperApp(QObject):
@@ -49,6 +71,9 @@ class WrapperApp(QObject):
         self._last_state: ConnectionState | None = None
         self._first_snapshot = True
         self._last_error = ""
+        self.recovery = SessionRecovery(_recovery_settings(self.prefs))
+        self._recovering = False
+        self._user_action_in_flight = False
 
         self._timer = QTimer(self)
         self._timer.setInterval(max(1000, self.prefs.monitor_interval_ms))
@@ -105,6 +130,7 @@ class WrapperApp(QObject):
         self.store.save(prefs)
         config.set_autostart(prefs.autostart)
         self._timer.setInterval(max(1000, prefs.monitor_interval_ms))
+        self.recovery.settings = _recovery_settings(prefs)
 
     # -- window ------------------------------------------------------------
     def show_window(self) -> None:
@@ -139,10 +165,12 @@ class WrapperApp(QObject):
             return
 
         active = snapshot.connected_account
-        if snapshot.status and snapshot.status.is_connected:
-            state = ConnectionState.CONNECTED
-        elif snapshot.status and snapshot.status.is_connecting:
+        if snapshot.status and snapshot.status.is_connecting:
             state = ConnectionState.CONNECTING
+        elif snapshot.is_phantom:
+            state = ConnectionState.STALE
+        elif snapshot.status and snapshot.status.is_connected:
+            state = ConnectionState.CONNECTED
         elif active is not None:
             state = active.state
         else:
@@ -156,6 +184,7 @@ class WrapperApp(QObject):
         account_name = active.name if active else (snapshot.status.name if snapshot.status else "")
         self.tray.set_state(state, tooltip, account_name)
         self.window.update_snapshot(snapshot, addresses)
+        self._maybe_recover(snapshot, account_name)
 
         if (
             not self._first_snapshot
@@ -170,7 +199,7 @@ class WrapperApp(QObject):
     def _build_tooltip(
         state: ConnectionState, snapshot: MonitorSnapshot, addresses: list[str]
     ) -> str:
-        lines = [f"SoftEther VPN Wrapper — {state.value}"]
+        lines = [f"SoftEther VPN Wrapper — {STATE_TEXT.get(state, state.value)}"]
         active = snapshot.connected_account
         if active:
             lines.append(f"Cuenta: {active.name}")
@@ -188,19 +217,88 @@ class WrapperApp(QObject):
     def _notify_transition(self, state: ConnectionState, account_name: str) -> None:
         if state is ConnectionState.CONNECTED:
             self.notify("VPN conectada", f"Cuenta: {account_name or 'activa'}")
+        elif state is ConnectionState.STALE:
+            self.notify(
+                "VPN sin transporte",
+                f"{account_name or 'La sesión'} figura conectada pero el túnel no "
+                "transporta tráfico. Reconectando…",
+            )
         elif state is ConnectionState.CONNECTING:
             self.notify("Conectando VPN", account_name or "Iniciando conexión…")
         elif state is ConnectionState.DISCONNECTED:
             self.notify("VPN desconectada", "La conexión se ha cerrado")
 
+    # -- recovery ----------------------------------------------------------
+    def _maybe_recover(self, snapshot: MonitorSnapshot, account_name: str) -> None:
+        """Rebuild the session when it claims to be up but carries no transport.
+
+        The decision (how many consecutive phantom samples, cooldown, attempt
+        budget) lives in :class:`~softether_wrapper.recovery.SessionRecovery`;
+        this method only wires it to the helper and the tray.
+        """
+        if self._recovering:
+            return
+
+        decision = self.recovery.observe(snapshot.is_phantom, busy=self._user_action_in_flight)
+        if decision is RecoveryDecision.RECONNECT:
+            name = account_name or self.prefs.default_account
+            if name:
+                self._start_recovery(name)
+        elif decision is RecoveryDecision.EXHAUSTED:
+            self.notify(
+                "VPN sin transporte",
+                "Se agotaron los intentos de reconexión automática. "
+                "Revisa la red y reconecta a mano.",
+                error=True,
+            )
+
+    def _start_recovery(self, name: str) -> None:
+        self._recovering = True
+        log.info(
+            "account %r reports connected with no TCP transport; dropping and reconnecting",
+            name,
+        )
+        self.schedule(
+            self._recover(name),
+            on_done=self._recovery_done,
+            on_error=self._recovery_failed,
+        )
+
+    async def _recover(self, name: str) -> str:
+        """Drop the dead session and start a fresh one.
+
+        ``AccountConnect`` returns as soon as the request is queued, so the
+        reconnect is verified by the next regular monitor poll, not here.
+        """
+        await self.client.run_client("AccountDisconnect", {"name": name})
+        await asyncio.sleep(RECOVERY_PAUSE_S)
+        outcome = await self.client.run_client("AccountConnect", {"name": name})
+        if not outcome.ok:
+            raise HelperError(outcome.error_message or f"código {outcome.exit_code}")
+        return name
+
+    def _recovery_done(self, name: str) -> None:
+        self._recovering = False
+        self.recovery.attempt_finished()
+        log.info("reconnect of %r issued", name)
+        self.refresh()
+
+    def _recovery_failed(self, exc: Exception) -> None:
+        self._recovering = False
+        self.recovery.attempt_finished()
+        log.warning("automatic recovery failed: %s", exc)
+        self.notify("VPN sin transporte", f"No se pudo reconectar: {exc}", error=True)
+
     # -- actions -----------------------------------------------------------
     def connect_account(self, name: str) -> None:
+        self._user_action_in_flight = True
         self.schedule(
             self.client.run_client("AccountConnect", {"name": name}),
             on_done=lambda outcome: self._after_action("Conectar", name, outcome),
         )
 
     def disconnect_account(self, name: str) -> None:
+        self._user_action_in_flight = True
         self.schedule(
             self.client.run_client("AccountDisconnect", {"name": name}),
             on_done=lambda outcome: self._after_action("Desconectar", name, outcome),
@@ -219,6 +317,7 @@ class WrapperApp(QObject):
                 self.notify("VPN", "No hay ninguna cuenta seleccionada", error=True)
 
     def _after_action(self, action: str, name: str, outcome) -> None:
+        self._user_action_in_flight = False
         if outcome.exit_code != 0:
             self.notify(
                 f"Error al {action.lower()}",

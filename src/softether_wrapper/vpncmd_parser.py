@@ -22,6 +22,7 @@ from .models import (
     PasswordSettings,
     SessionStatus,
     VersionInfo,
+    digits_to_int,
 )
 
 PAIR_SEPARATOR = "|"
@@ -83,8 +84,10 @@ def parse_error_code(text: str) -> int | None:
 
 
 def _to_int(value: str) -> int:
-    digits = re.sub(r"[^0-9]", "", value or "")
-    return int(digits) if digits else 0
+    # Kept as an alias so existing callers (and the tests) keep working; the
+    # implementation now lives in :mod:`models` because the session models need
+    # it too and must not import the parser.
+    return digits_to_int(value)
 
 
 # ---------------------------------------------------------------------------

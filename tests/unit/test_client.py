@@ -1,7 +1,7 @@
 from dbus_next import Variant
 
 from softether_wrapper.dbus_client import MonitorSnapshot, _marshal, _outcome
-from softether_wrapper.models import AccountSummary
+from softether_wrapper.models import AccountSummary, SessionStatus
 
 
 def test_marshal_wraps_variants():
@@ -36,3 +36,26 @@ def test_snapshot_connected_account():
 def test_snapshot_without_connected_account():
     snapshot = MonitorSnapshot(accounts=[AccountSummary(name="only", status="Disconnected")])
     assert snapshot.connected_account is None
+
+
+def test_snapshot_is_phantom_needs_link_and_status():
+    session = SessionStatus(
+        session_status="Connection Completed (Session Established)", tcp_connections="0"
+    )
+    linked = MonitorSnapshot(
+        accounts=[AccountSummary(name="second", status="Connected")], status=session
+    )
+    assert linked.is_phantom
+
+    # No AccountStatusGet result yet: the link alone proves nothing.
+    unlinked = MonitorSnapshot(accounts=[AccountSummary(name="second", status="Connected")])
+    assert not unlinked.is_phantom
+
+    # A healthy tunnel is never phantom, however the counters read.
+    healthy = MonitorSnapshot(
+        accounts=[AccountSummary(name="second", status="Connected")],
+        status=SessionStatus(
+            session_status="Connection Completed (Session Established)", tcp_connections="2"
+        ),
+    )
+    assert not healthy.is_phantom

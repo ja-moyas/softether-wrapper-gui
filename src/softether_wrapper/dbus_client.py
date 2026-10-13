@@ -54,6 +54,22 @@ class MonitorSnapshot:
                 return account
         return None
 
+    @property
+    def is_phantom(self) -> bool:
+        """A connected account whose tunnel has no transport left.
+
+        This is the state that goes unnoticed for hours: ``AccountList`` still
+        says ``Connected`` while ``AccountStatusGet`` reports ``Number of TCP
+        Connections: 0`` and every byte counter at zero, so the tray stays green
+        and ARP to the remote network never resolves.
+        """
+        status = self.status
+        if status is None or self.connected_account is None:
+            return False
+        if status.is_connecting:
+            return False
+        return status.tcp_connections_count == 0
+
 
 def _outcome(command: str, result: Sequence[object]) -> CommandOutcome:
     code = result[0]

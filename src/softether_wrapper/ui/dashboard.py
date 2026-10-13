@@ -127,10 +127,12 @@ class DashboardPage(QWidget):
         status = snapshot.status
         self._account = active.name if active else (status.name if status else "")
 
-        if status and status.is_connected:
-            state = ConnectionState.CONNECTED
-        elif status and status.is_connecting:
+        if status and status.is_connecting:
             state = ConnectionState.CONNECTING
+        elif snapshot.is_phantom:
+            state = ConnectionState.STALE
+        elif status and status.is_connected:
+            state = ConnectionState.CONNECTED
         elif active is not None:
             state = active.state
         else:
@@ -140,13 +142,17 @@ class DashboardPage(QWidget):
             ConnectionState.CONNECTED: "Conectado",
             ConnectionState.CONNECTING: "Conectando…",
             ConnectionState.DISCONNECTED: "Sin conexión",
+            ConnectionState.STALE: "Conectada sin transporte",
             ConnectionState.UNKNOWN: "Estado desconocido",
         }
         self.state_label.setText(labels.get(state, "—"))
         self.account_label.setText(f"Cuenta: {self._account}" if self._account else "—")
-        self.connect_button.setEnabled(state is not ConnectionState.CONNECTED)
+        self.connect_button.setEnabled(
+            state not in (ConnectionState.CONNECTED, ConnectionState.STALE)
+        )
         self.disconnect_button.setEnabled(
-            state in (ConnectionState.CONNECTED, ConnectionState.CONNECTING)
+            state
+            in (ConnectionState.CONNECTED, ConnectionState.CONNECTING, ConnectionState.STALE)
         )
 
         server = ""

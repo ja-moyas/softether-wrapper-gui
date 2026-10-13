@@ -1,0 +1,43 @@
+Connected to VPN Client "localhost".
+
+VPN Client>AccountStatusGet MyVPN
+AccountStatusGet command - Get Current VPN Connection Setting Status
+Item                                      |Value
+------------------------------------------+-------------------------------------------------------------
+VPN Connection Setting Name               |MyVPN
+Session Status                            |Connection Completed (Session Established)
+VLAN ID                                   |-
+Server Name                               |vpn.example.com
+Port Number                               |TCP Port 443
+Server Product Name                       |SoftEther VPN Server Developer Edition (64 bit) (Open Source)
+Server Version                            |5.02
+Server Build                              |Build 5187
+Connection Started at                     |2026-10-13 (Tue) 17:01:12
+First Session has been Established since  |2026-10-13 (Tue) 17:01:15
+Current Session has been Established since|2026-10-13 (Tue) 17:01:15
+Number of Established Sessions            |1 Times
+Half Duplex TCP Connection Mode           |No (Full Duplex Mode)
+VoIP / QoS Function                       |Enabled
+Number of TCP Connections                 |0
+Maximum Number of TCP Connections         |2
+Encryption                                |Enabled (Algorithm: TLS_AES_256_GCM_SHA384)
+Use of Compression                        |No (No Compression)
+Physical Underlay Protocol                |Standard TCP/IP (IPv4)
+UDP Acceleration is Supported             |Yes
+UDP Acceleration is Active                |No
+Session Name                              |SID-ALICE-187
+Connection Name                           |CID-7940
+Session Key (160 bit)                     |7A1F0B9C4D2E6835AF90C174E33B2D88561AC0E4
+Bridge / Router Mode                      |No
+Monitoring Mode                           |No
+Outgoing Data Size                        |0 bytes
+Incoming Data Size                        |0 bytes
+Outgoing Unicast Packets                  |0 packets
+Outgoing Unicast Total Size               |0 bytes
+Outgoing Broadcast Packets                |65 packets
+Outgoing Broadcast Total Size             |11,250 bytes
+Incoming Unicast Packets                  |0 packets
+Incoming Unicast Total Size               |0 bytes
+Incoming Broadcast Packets                |0 packets
+Incoming Broadcast Total Size             |0 bytes
+The command completed successfully.

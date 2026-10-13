@@ -47,16 +47,35 @@ def test_account_status_connected():
     status = parser.parse_account_status(load("accountstatus_connected.txt"))
     assert status.is_connected
     assert not status.is_connecting
+    assert status.tcp_connections_count == 2
+    assert status.has_live_transport
+    assert not status.is_phantom
     assert status.outgoing_bytes == 1703088
     assert status.incoming_bytes == 14414551
     assert status.outgoing_packets == 10814
     assert status.encryption.startswith("Enabled")
 
 
+def test_account_status_phantom():
+    """Connected in name only: the session object survives with no transport."""
+    status = parser.parse_account_status(load("accountstatus_phantom.txt"))
+    assert status.is_connected
+    assert status.session_name.startswith("SID-")
+    assert status.tcp_connections == "0"
+    assert status.tcp_connections_count == 0
+    assert not status.has_live_transport
+    assert status.is_phantom
+    assert status.outgoing_bytes == 0
+    assert status.incoming_bytes == 0
+    assert status.outgoing_packets == 0
+    assert status.incoming_packets == 0
+
+
 def test_account_status_connecting():
     status = parser.parse_account_status(load("accountstatus_connecting.txt"))
     assert status.is_connecting
     assert not status.is_connected
+    assert not status.is_phantom
     assert status.outgoing_bytes == 0
 
 

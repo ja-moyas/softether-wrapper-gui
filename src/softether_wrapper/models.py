@@ -5,14 +5,33 @@ None of these objects depend on Qt, so they can be unit-tested in isolation.
 
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass, field
 from enum import Enum
 
 
+def digits_to_int(value: object) -> int:
+    """Coerce a vpncmd numeric field (``"1,703,088 bytes"``, ``"-"``) to ``int``.
+
+    Shared by the parser (integer counters) and by the session models that need
+    to compare a counter against zero.  Anything non-numeric yields ``0``.
+    """
+    digits = re.sub(r"[^0-9]", "", str(value or ""))
+    return int(digits) if digits else 0
+
+
 class ConnectionState(str, Enum):
+    """State shown by the tray icon and the dashboard.
+
+    ``STALE`` is always derived, never parsed out of ``vpncmd`` text: the client
+    reports the account as connected but the tunnel carries no transport, so
+    nothing reaches the remote network.
+    """
+
     CONNECTED = "connected"
     CONNECTING = "connecting"
     DISCONNECTED = "disconnected"
+    STALE = "stale"
     UNKNOWN = "unknown"
 
     @classmethod
@@ -45,6 +64,12 @@ class AccountSummary:
 
     @property
     def is_connected(self) -> bool:
+        """``True`` when the client *reports* this account as connected.
+
+        This is the link state read from ``AccountList``.  It says nothing about
+        whether the tunnel still transports traffic — see
+        :attr:`SessionStatus.is_phantom` for that.
+        """
         return self.state is ConnectionState.CONNECTED
 
 
@@ -115,6 +140,28 @@ class SessionStatus:
     @property
     def is_connecting(self) -> bool:
         return "connecting" in self.session_status.lower()
+
+    @property
+    def tcp_connections_count(self) -> int:
+        """``Number of TCP Connections`` as an integer."""
+        return digits_to_int(self.tcp_connections)
+
+    @property
+    def has_live_transport(self) -> bool:
+        """``True`` when at least one TCP connection to the server is alive."""
+        return self.tcp_connections_count > 0
+
+    @property
+    def is_phantom(self) -> bool:
+        """The session claims to be established but carries no transport.
+
+        SoftEther keeps the session object (and the "Session Established" text)
+        after the socket to the server dies — for instance when the notebook
+        loses internet.  Every counter stays at zero, the TAP keeps its IP and
+        route, and ARP to the remote network never resolves, so the connection
+        looks fine while nothing can reach the server.
+        """
+        return self.is_connected and not self.has_live_transport
 
 
 @dataclass

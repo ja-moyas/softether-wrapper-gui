@@ -54,6 +54,26 @@ class SettingsDialog(QDialog):
         self.show_ip = QCheckBox("Mostrar la dirección IP del adaptador")
         self.show_ip.setChecked(prefs.show_ip)
 
+        self.auto_recover = QCheckBox(
+            "Reconectar si la sesión queda conectada pero sin transporte"
+        )
+        self.auto_recover.setChecked(prefs.auto_recover)
+
+        self.recover_after = QSpinBox()
+        self.recover_after.setRange(1, 20)
+        self.recover_after.setSuffix(" muestras")
+        self.recover_after.setValue(prefs.recover_after)
+
+        self.recover_cooldown = QSpinBox()
+        self.recover_cooldown.setRange(10, 600)
+        self.recover_cooldown.setSingleStep(10)
+        self.recover_cooldown.setSuffix(" s")
+        self.recover_cooldown.setValue(prefs.recover_cooldown_s)
+
+        self.recover_max_attempts = QSpinBox()
+        self.recover_max_attempts.setRange(1, 50)
+        self.recover_max_attempts.setValue(prefs.recover_max_attempts)
+
         form = QFormLayout()
         form.addRow("Intervalo de monitorización:", self.interval)
         form.addRow(self.notifications)
@@ -62,6 +82,10 @@ class SettingsDialog(QDialog):
         form.addRow("Cuenta por defecto:", self.default_account)
         form.addRow("Interfaz TAP:", self.tap_interface)
         form.addRow(self.show_ip)
+        form.addRow(self.auto_recover)
+        form.addRow("Reconectar tras:", self.recover_after)
+        form.addRow("Espera entre intentos:", self.recover_cooldown)
+        form.addRow("Intentos consecutivos:", self.recover_max_attempts)
 
         buttons = QDialogButtonBox(
             QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel
@@ -83,4 +107,8 @@ class SettingsDialog(QDialog):
             tap_interface=self.tap_interface.text().strip() or base.tap_interface,
             show_ip=self.show_ip.isChecked(),
             helper_retry_ms=base.helper_retry_ms,
+            auto_recover=self.auto_recover.isChecked(),
+            recover_after=self.recover_after.value(),
+            recover_cooldown_s=self.recover_cooldown.value(),
+            recover_max_attempts=self.recover_max_attempts.value(),
         )
