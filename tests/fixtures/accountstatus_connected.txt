@@ -1,0 +1,43 @@
+Connected to VPN Client "localhost".
+
+VPN Client>AccountStatusGet MyVPN
+AccountStatusGet command - Get Current VPN Connection Setting Status
+Item                                      |Value
+------------------------------------------+-------------------------------------------------------------
+VPN Connection Setting Name               |MyVPN
+Session Status                            |Connection Completed (Session Established)
+VLAN ID                                   |-
+Server Name                               |vpn.example.com
+Port Number                               |TCP Port 443
+Server Product Name                       |SoftEther VPN Server Developer Edition (64 bit) (Open Source)
+Server Version                            |5.02
+Server Build                              |Build 5187
+Connection Started at                     |2026-10-09 (Fri) 17:49:40
+First Session has been Established since  |2026-10-09 (Fri) 17:49:43
+Current Session has been Established since|2026-10-09 (Fri) 17:49:43
+Number of Established Sessions            |1 Times
+Half Duplex TCP Connection Mode           |No (Full Duplex Mode)
+VoIP / QoS Function                       |Enabled
+Number of TCP Connections                 |2
+Maximum Number of TCP Connections         |2
+Encryption                                |Enabled (Algorithm: TLS_AES_256_GCM_SHA384)
+Use of Compression                        |No (No Compression)
+Physical Underlay Protocol                |Standard TCP/IP (IPv4)
+UDP Acceleration is Supported             |Yes
+UDP Acceleration is Active                |Yes
+Session Name                              |SID-ALICE-186
+Connection Name                           |CID-7922
+Session Key (160 bit)                     |4CEBD2985CDF70425E0476D4BB3EA1E54DABC530
+Bridge / Router Mode                      |No
+Monitoring Mode                           |No
+Outgoing Data Size                        |1,703,088 bytes
+Incoming Data Size                        |14,414,551 bytes
+Outgoing Unicast Packets                  |10,814 packets
+Outgoing Unicast Total Size               |1,340,796 bytes
+Outgoing Broadcast Packets                |110 packets
+Outgoing Broadcast Total Size             |17,622 bytes
+Incoming Unicast Packets                  |14,056 packets
+Incoming Unicast Total Size               |13,922,314 bytes
+Incoming Broadcast Packets                |298 packets
+Incoming Broadcast Total Size             |154,024 bytes
+The command completed successfully.

@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Name=SoftEther VPN Wrapper
+GenericName=VPN Client
+Comment=System tray wrapper for the SoftEther vpncmd client
+Exec=softether-wrapper
+Icon=softether-wrapper
+Terminal=false
+Categories=Network;Security;
+Keywords=VPN;SoftEther;vpncmd;
+StartupNotify=true

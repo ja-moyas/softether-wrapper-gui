@@ -1,0 +1,12 @@
+Connected to VPN Client "localhost".
+
+VPN Client>KeepGet
+KeepGet command - Get the Keep Alive Internet Connection Function
+Item                      |Value
+--------------------------+-----------------------
+Host Name                 |keepalive.softether.org
+Port Number               |80
+Packet Send Interval (Sec)|50
+Protocol                  |UDP/IP
+Current Status            |Disable
+The command completed successfully.

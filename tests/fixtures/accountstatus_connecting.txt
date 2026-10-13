@@ -1,0 +1,42 @@
+Connected to VPN Client "localhost".
+
+VPN Client>AccountStatusGet MyVPN
+AccountStatusGet command - Get Current VPN Connection Setting Status
+Item                                      |Value
+------------------------------------------+-------------------------------------------------------------
+VPN Connection Setting Name               |MyVPN
+Session Status                            |Connecting to VPN Server
+Server Name                               |vpn.example.com
+Port Number                               |TCP Port 443
+Server Product Name                       |-
+Server Version                            |-
+Server Build                              |-
+Connection Started at                     |2026-10-09 (Fri) 18:05:00
+First Session has been Established since  |-
+Current Session has been Established since|-
+Number of Established Sessions            |0 Times
+Half Duplex TCP Connection Mode           |No (Full Duplex Mode)
+VoIP / QoS Function                       |Enabled
+Number of TCP Connections                 |0
+Maximum Number of TCP Connections         |0
+Encryption                                |-
+Use of Compression                        |No (No Compression)
+Physical Underlay Protocol                |Standard TCP/IP (IPv4)
+UDP Acceleration is Supported             |Yes
+UDP Acceleration is Active                |No
+Session Name                              |-
+Connection Name                           |-
+Session Key (160 bit)                     |-
+Bridge / Router Mode                      |No
+Monitoring Mode                           |No
+Outgoing Data Size                        |0 bytes
+Incoming Data Size                        |0 bytes
+Outgoing Unicast Packets                  |0 packets
+Outgoing Unicast Total Size               |0 bytes
+Outgoing Broadcast Packets                |0 packets
+Outgoing Broadcast Total Size             |0 bytes
+Incoming Unicast Packets                  |0 packets
+Incoming Unicast Total Size               |0 bytes
+Incoming Broadcast Packets                |0 packets
+Incoming Broadcast Total Size             |0 bytes
+The command completed successfully.

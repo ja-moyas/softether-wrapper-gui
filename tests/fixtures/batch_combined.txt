@@ -1,0 +1,48 @@
+The commands written in the file "/run/softether-wrapper/cmds-xyz.txt" will be used instead of input from keyboard.
+vpncmd command - SoftEther VPN Command Line Management Utility Developer Edition
+SoftEther VPN Command Line Management Utility (vpncmd command)
+Developer Edition
+Version 5.01 Build 9674   (English)
+Compiled 2024/04/01 08:02:21 by Unknown at Unknown
+Copyright (c) all contributors on SoftEther VPN project in GitHub.
+Copyright (c) Daiyuu Nobori, SoftEther Project at University of Tsukuba, and SoftEther Corporation.
+All rights reserved.
+
+Connected to VPN Client "localhost".
+
+VPN Client>VersionGet
+VersionGet command - Get Version Information of VPN Client Service
+Item               |Value
+-------------------+--------------------------------------------------
+Product Name       |SoftEther VPN Client Developer Edition
+Version Information|Version 5.01 Build 9674   (English)
+Build Information  |Compiled 2024/04/01 08:02:21 by Unknown at Unknown
+Process ID         |0
+OS Type            |Linux
+The command completed successfully.
+
+VPN Client>AccountList
+AccountList command - Get List of VPN Connection Settings
+Item                        |Value
+----------------------------+--------------------------------------------
+VPN Connection Setting Name |MyVPN
+Status                      |Connected
+VPN Server Hostname         |vpn.example.com:443 (Direct TCP/IP Connection)
+Virtual Hub                 |MyHub
+Virtual Network Adapter Name|vpn0
+The command completed successfully.
+
+VPN Client>AccountGet MissingVPN
+AccountGet command - Get Setting of VPN Connection Setting 
+Error occurred. (Error code: 36)
+The specified VPN Connection Setting does not exist.
+VPN Client>NicList
+NicList command - Get List of Virtual Network Adapters
+Item                        |Value
+----------------------------+-----------------------------------
+Virtual Network Adapter Name|vpn0
+Status                      |Enabled
+MAC Address                 |5E17534E105A
+Version                     |Version 5.01 Build 9674   (English)
+The command completed successfully.
+

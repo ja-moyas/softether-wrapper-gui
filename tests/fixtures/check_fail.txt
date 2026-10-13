@@ -1,0 +1,30 @@
+VPN Tools has been launched. By inputting HELP, you can view a list of the commands that can be used.
+
+VPN Tools>Check
+Check command - Check whether SoftEther VPN Operation is Possible
+---------------------------------------------------
+SoftEther VPN Operation Environment Check Tool
+Developer Edition
+
+Copyright (c) SoftEther VPN Project.
+All Rights Reserved.
+
+If this operation environment check tool is run on a system and that system passes, it is most likely that SoftEther VPN software can operate on that system. This check may take a while. Please wait...
+
+Checking 'Kernel System'... 
+              Pass
+Checking 'Memory Operation System'... 
+              Pass
+Checking 'ANSI / Unicode string processing system'... 
+              Pass
+Checking 'File system'... 
+              Pass
+Checking 'Thread processing system'... 
+              Pass
+Checking 'Network system'... 
+Connect Failed. (0)
+              Fail
+
+Some checks failed. Please check the operation environment of this system. If SoftEther VPN Server / Bridge were to be executed on this system, troubles may occur.
+
+The command completed successfully.

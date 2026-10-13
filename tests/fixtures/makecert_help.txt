@@ -1,0 +1,22 @@
+VPN Tools has been launched. By inputting HELP, you can view a list of the commands that can be used.
+
+VPN Tools>MakeCert /?
+MakeCert command - Create New X.509 Certificate and Private Key (1024 bit)
+Help for command "MakeCert"
+
+Purpose:
+  Create New X.509 Certificate and Private Key (1024 bit)
+
+Usage:
+  MakeCert [/CN:cn] [/O:o] [/OU:ou] [/C:c] [/ST:st] [/L:l] [/SERIAL:serial] [/
+  EXPIRES:expires] [/SIGNCERT:signcert] [/SIGNKEY:signkey] [/SAVECERT:
+  savecert] [/SAVEKEY:savekey]
+
+Parameters:
+  /CN       - Specify the Name (CN) item of the certificate to create. You can
+              specify "none".
+  /O        - Specify the Organization (O) item of the certificate to create. 
+              You can specify "none".
+  /SAVECERT - Specify the file name to save the certificate you created.
+  /SAVEKEY  - Specify the file name to save private key that is compatible 
+              with the certificate you created.

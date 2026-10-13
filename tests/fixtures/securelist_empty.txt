@@ -1,0 +1,7 @@
+Connected to VPN Client "localhost".
+
+VPN Client>SecureList
+SecureList command - Get List of Usable Smart Card Types
+Item|Value
+----+-----
+The command completed successfully.

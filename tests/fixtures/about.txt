@@ -1,0 +1,20 @@
+vpncmd command - SoftEther VPN Command Line Management Utility Developer Edition
+SoftEther VPN Command Line Management Utility (vpncmd command)
+Developer Edition
+Version 5.01 Build 9674   (English)
+Compiled 2024/04/01 08:02:21 by Unknown at Unknown
+Copyright (c) all contributors on SoftEther VPN project in GitHub.
+Copyright (c) Daiyuu Nobori, SoftEther Project at University of Tsukuba, and SoftEther Corporation.
+All rights reserved.
+
+VPN Tools has been launched. By inputting HELP, you can view a list of the commands that can be used.
+
+VPN Tools>About
+About command - Display the version information
+SoftEther VPN Command Line Management Utility (vpncmd command)
+Developer Edition
+Version 5.01 Build 9674   (English)
+Compiled 2024/04/01 08:02:21 by Unknown at Unknown
+Copyright (c) all contributors on SoftEther VPN project in GitHub.
+Copyright (c) Daiyuu Nobori, SoftEther Project at University of Tsukuba, and SoftEther Corporation.
+All rights reserved.

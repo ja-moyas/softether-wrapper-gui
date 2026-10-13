@@ -1,0 +1,17 @@
+Connected to VPN Client "localhost".
+
+VPN Client>AccountList
+AccountList command - Get List of VPN Connection Settings
+Item                        |Value
+----------------------------+--------------------------------------------
+VPN Connection Setting Name |MyVPN
+Status                      |Connected
+VPN Server Hostname         |vpn.example.com:443 (Direct TCP/IP Connection)
+Virtual Hub                 |MyHub
+Virtual Network Adapter Name|vpn0
+VPN Connection Setting Name |BackupVPN
+Status                      |Disconnected
+VPN Server Hostname         |backup.example.net:443 (Direct TCP/IP Connection)
+Virtual Hub                 |BackupHub
+Virtual Network Adapter Name|vpn1
+The command completed successfully.

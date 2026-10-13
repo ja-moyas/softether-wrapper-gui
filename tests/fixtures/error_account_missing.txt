@@ -1,0 +1,6 @@
+Connected to VPN Client "localhost".
+
+VPN Client>AccountGet MyVPN
+AccountGet command - Get Setting of VPN Connection Setting 
+Error occurred. (Error code: 36)
+The specified VPN Connection Setting does not exist.

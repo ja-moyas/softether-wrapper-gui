@@ -1,0 +1,27 @@
+Connected to VPN Client "localhost".
+
+VPN Client>AccountGet MyVPN
+AccountGet command - Get Setting of VPN Connection Setting 
+Item                                                 |Value
+-----------------------------------------------------+--------------------------------
+VPN Connection Setting Name                          |MyVPN
+Destination VPN Server Host Name                     |vpn.example.com
+Destination VPN Server Port Number                   |443
+Destination VPN Server Virtual Hub Name              |MyHub
+Proxy Server Type                                    |Direct TCP/IP Connection
+Verify Server Certificate                            |Disable
+Device Name Used for Connection                      |vpn0
+Authentication Type                                  |Standard Password Authentication
+User Name                                            |alice
+Number of TCP Connections to Use in VPN Communication|1
+Interval between Establishing Each TCP Connection    |1
+Connection Life of Each TCP Connection               |Infinite
+Use Half Duplex Mode                                 |Disable
+Encryption by SSL                                    |Enable
+Data Compression                                     |Disable
+Connect by Bridge / Router Mode                      |Disable
+Connect by Monitoring Mode                           |Disable
+No Adjustment for Routing Table                      |Disable
+Do not Use QoS Control Function                      |Disable
+Disable UDP Acceleration                             |Disable
+The command completed successfully.

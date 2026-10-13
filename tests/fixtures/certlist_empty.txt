@@ -1,0 +1,7 @@
+Connected to VPN Client "localhost".
+
+VPN Client>CertList
+CertList command - Get List of Trusted CA Certificates
+Item|Value
+----+-----
+The command completed successfully.

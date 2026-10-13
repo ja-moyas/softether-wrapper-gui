@@ -1,0 +1,6 @@
+Connected to VPN Client "localhost".
+
+VPN Client>NicGetSetting vpn0
+NicGetSetting command - Get Virtual Network Adapter Setting
+Error occurred. (Error code: 33)
+Unsupported.

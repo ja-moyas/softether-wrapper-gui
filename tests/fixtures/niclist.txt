@@ -1,0 +1,11 @@
+Connected to VPN Client "localhost".
+
+VPN Client>NicList
+NicList command - Get List of Virtual Network Adapters
+Item                        |Value
+----------------------------+-----------------------------------
+Virtual Network Adapter Name|vpn0
+Status                      |Enabled
+MAC Address                 |5E17534E105A
+Version                     |Version 5.01 Build 9674   (English)
+The command completed successfully.
